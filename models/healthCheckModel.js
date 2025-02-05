@@ -17,7 +17,9 @@ const HealthCheck = sequelize.define(
   {
     timestamps: false,
     tableName: 'health_check_table',
-  }
+  },
+  
+
 );
 
-module.exports = { HealthCheck };
+module.exports = {HealthCheck} ;

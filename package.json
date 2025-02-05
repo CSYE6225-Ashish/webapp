@@ -6,6 +6,20 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
-  }
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "name": "webapp",
+  "version": "1.0.0",
+  "description": "/healthz api",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest --coverage",
+    "start": "node app.js"
+  },
+  "author": "ashish babish gangaramani",
+  "license": "ISC"
 }

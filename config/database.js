@@ -14,6 +14,7 @@ if (process.env.ENV === 'test'){
   );  
 }
 else{
+  
   sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USERNAME,
