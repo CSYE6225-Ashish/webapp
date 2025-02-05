@@ -88,6 +88,78 @@ curl -vvvv -X PUT http://localhost:8080/healthz
 - **200 OK** if the service is healthy.
 - **503 Service Unavailable** if the service is unhealthy.
 
+
+# Assignment 2
+
+## Testing Using Jest
+
+This project includes a testing setup using the following dependencies:
+
+- `jest`: ^29.7.0
+- `supertest`: ^7.0.0
+
+### Test Setup
+
+1. Modify the `package.json` file by adding the following script under the `scripts` section:
+   ```json
+   "scripts": {
+       "test": "jest --coverage"
+   }
+   ```
+   This will ensure that tests can be run with the `npm test` command.
+
+### Test Coverage
+
+The tests ensure the following:
+
+- **Successful Data Entry:** Return a status code `200` if a result is successfully entered into the table.
+- **Invalid HTTP Methods:** Return status code `405` for unsupported HTTP methods such as POST, PUT, DELETE, and PATCH.
+- **Database Connectivity:** Return status code `503` if the database is not connected.
+- **Payload and Parameter Validation:** Validate if payload is missing from the request body or if request parameters are not included.
+
+## Preparing for Digital Ocean Deployment
+
+### Step 1: Create a Droplet in Digital Ocean
+
+1. Navigate to Digital Ocean and click on **Create Droplet**.
+2. Select the server location closest to your region.
+3. Choose **Regular SSD** as the storage option.
+4. Select the configuration with **1 GB RAM / 1 CPU** and **25 GB SSD disk**.
+5. Set the OS to **Ubuntu 24.04 LTS**.
+6. Generate an **SSH key** for secure access.
+7. Click **Create Droplet** to complete the setup.
+
+### Step 2: Transfer Files to the Droplet
+
+Copy the `script` folder, application zip file, and the `.env` file to the newly created droplet using the following command:
+
+```bash
+thescp <zip_file> <script_folder> <.env_file> root@<droplet_ip>:/root
+```
+
+### Step 3: Run the Deployment Script
+
+Execute the deployment script on the droplet:
+
+```bash
+bash <script_name>.sh
+```
+
+### Script Operations
+
+The deployment script performs the following tasks:
+
+1. **Update Packages:** Updates the package lists and upgrades system packages.
+2. **RDBMS Installation:** Installs the mysql
+3. **Database Creation:** Sets up the database in the RDBMS.
+4. **User and Group Setup:** Creates a new Linux group and user for the application.
+5. **Application Deployment:** Unzips the application to `/opt/csye6225`.
+6. **Permission Management:** Updates the permissions for the directory and its contents to ensure proper access control.
+
+
+
+
+
 ## Conclusion
 The `/healthz` API is a crucial tool for maintaining the health and stability of web application instances. By following this setup and testing guide, you can efficiently deploy and monitor your application.
 

@@ -15,7 +15,9 @@ app.disable('x-powered-by');
 app.use('/', middleware, healthCheckRoutes);
 
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App listening on the port ${port}`);
 });
 
+
+module.exports = {server}
