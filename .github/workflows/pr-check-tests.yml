@@ -25,13 +25,6 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          echo "DB_NAME is: "'$DB_USERNAME'
+          echo "DB_NAME is: " '$DB_USERNAME'
           sudo mysql -e "ALTER USER '${DB_USERNAME}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DB_PASSWORD}';"
-          DB_EXISTS=$(mysql -u"$DB_USERNAME" -p"$DB_PASSWORD" -e "SHOW DATABASES LIKE '$DB_NAME';" | grep "$DB_NAME" > /dev/null; echo $?)
-          if [ $DB_EXISTS -eq 0 ]; then
-            echo "Database '$DB_NAME' already exists. Skipping creation."
-          else
-            echo "Database '$DB_NAME' does not exist. Creating database..."
-            mysql -u"$DB_USERNAME" -p"$DB_PASSWORD" -e "CREATE DATABASE $DB_NAME;"
-            echo "Database '$DB_NAME' created successfully."
-          fi
+          
