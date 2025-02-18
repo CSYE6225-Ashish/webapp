@@ -157,9 +157,8 @@ The deployment script performs the following tasks:
 6. **Permission Management:** Updates the permissions for the directory and its contents to ensure proper access control.
 
 
-
+## pr-checks with Github Actions
 
 
 ## Conclusion
 The `/healthz` API is a crucial tool for maintaining the health and stability of web application instances. By following this setup and testing guide, you can efficiently deploy and monitor your application.
-
