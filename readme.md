@@ -157,7 +157,7 @@ The deployment script performs the following tasks:
 6. **Permission Management:** Updates the permissions for the directory and its contents to ensure proper access control.
 
 
-## pr-checks with Github Actions
+## pr-checks with Github Actions..
 
 
 ## Conclusion
