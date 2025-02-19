@@ -11,21 +11,7 @@ jobs:
 
 
  
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DB_NAME_TEST }}
-          MYSQL_USER: ${{ secrets.DB_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+   
  
     steps:
       - name: Checkout Repository
@@ -37,6 +23,8 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
           echo "DB_HOST= 127.0.0.1" >> .env
           echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
+      - name: Check mysql version
+        run: mysql --version
  
       - name: Set up Node.js
         uses: actions/setup-node@v3
