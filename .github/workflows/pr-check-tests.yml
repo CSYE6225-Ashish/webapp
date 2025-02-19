@@ -52,8 +52,6 @@ jobs:
           CREATE DATABASE IF NOT EXISTS \`${{secrets.DB_NAME_TEST}}\`;
           CREATE USER IF NOT EXISTS '${{ secrets.DB_USER }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
           GRANT ALL PRIVILEGES ON \`${{secrets.DB_NAME_TEST}}\`.* TO '${{ secrets.DB_USER }}'@'%';
-          ALTER USER '${{ secrets.DB_USER }}'@'%' IDENTIFIED WITH mysql_native_password BY '${{ secrets.DB_PASSWORD }}';
-          FLUSH PRIVILEGES;
           EOF
  
       
