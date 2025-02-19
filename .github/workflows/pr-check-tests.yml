@@ -22,6 +22,7 @@ jobs:
           echo "DB_USERNAME= root" >> .env
           echo "DB_PASSWORD= root" >> .env
           echo "DB_HOST= 127.0.0.1" >> .env
+          echo "ENV" = "test" >> .env
           echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
 
 
