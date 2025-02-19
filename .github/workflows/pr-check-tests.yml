@@ -55,6 +55,4 @@ jobs:
       
       - name: Run Tests
         run: |
-          npm test
-#  test TESTCI##2
- 
+          npm test 
