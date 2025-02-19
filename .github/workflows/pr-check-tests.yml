@@ -20,7 +20,7 @@ jobs:
       - name: Set Environment Variables for Tests
         run: |
           echo "DB_USERNAME= root" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
+          echo "DB_PASSWORD= root" >> .env
           echo "DB_HOST= 127.0.0.1" >> .env
           echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
 
@@ -28,14 +28,14 @@ jobs:
       - name: Enable mysql service
         run: sudo systemctl start mysql
  
-    #   - name: Set up Node.js
-    #     uses: actions/setup-node@v3
-    #     with:
-    #       node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
  
-    #   - name: Install Dependencies
-    #     run: |
-    #       npm install
+      - name: Install Dependencies
+        run: |
+          npm install
  
       - name: Wait for MySQL to be Ready
         run: |
