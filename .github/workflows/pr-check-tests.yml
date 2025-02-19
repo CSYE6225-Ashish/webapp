@@ -50,8 +50,6 @@ jobs:
         run: |
           sudo mysql -uroot -proot <<EOF
           CREATE DATABASE IF NOT EXISTS \`${{secrets.DB_NAME_TEST}}\`;
-          CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
-          GRANT ALL PRIVILEGES ON \`${{secrets.DB_NAME_TEST}}\`.* TO '${{ secrets.DB_USER }}'@'%';
           EOF
  
       
