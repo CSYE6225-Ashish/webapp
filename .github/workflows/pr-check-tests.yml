@@ -28,14 +28,14 @@ jobs:
       - name: Enable mysql service
         run: sudo systemctl start mysql
  
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+    #   - name: Set up Node.js
+    #     uses: actions/setup-node@v3
+    #     with:
+    #       node-version: '20'
  
-      - name: Install Dependencies
-        run: |
-          npm install
+    #   - name: Install Dependencies
+    #     run: |
+    #       npm install
  
       - name: Wait for MySQL to be Ready
         run: |
@@ -56,7 +56,7 @@ jobs:
       
       - name: Initialize MySQL Database as Root
         run: |
-          sudo mysql -uroot -p${{ secrets.DB_ROOT_PASSWORD }} <<EOF
+          sudo mysql -uroot <<EOF
           CREATE DATABASE IF NOT EXISTS \`${{ secrets.DB_NAME_TEST }}\`;
           CREATE USER IF NOT EXISTS '${{ secrets.DB_USER }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
           GRANT ALL PRIVILEGES ON \`${{ secrets.DB_NAME_TEST }}\`.* TO '${{ secrets.DB_USER }}'@'%';
