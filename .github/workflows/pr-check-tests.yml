@@ -48,9 +48,9 @@ jobs:
 
       - name: Initialize MySQL Database as Root
         run: |
-          sudo mysql -uroot -proot<<EOF
+          sudo mysql -u${{secrets.DB_USER_ROOT}} -${{ secrets.DB_ROOT_PASSWORD }}<<EOF
           CREATE DATABASE IF NOT EXISTS \`${{secrets.DB_NAME_TEST}}\`;
-          CREATE USER IF NOT EXISTS '${{ secrets.DB_USER }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
+          CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
           GRANT ALL PRIVILEGES ON \`${{secrets.DB_NAME_TEST}}\`.* TO '${{ secrets.DB_USER }}'@'%';
           EOF
  
