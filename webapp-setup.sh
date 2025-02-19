@@ -1,4 +1,4 @@
-#!/bin/bash
+    #!/bin/bash
 
 if [ -f ".env" ]; then
     export $(grep -v '^#' .env | xargs)
@@ -115,3 +115,4 @@ sudo chmod -R 750 $APP_DIR
 echo "Setup completed successfully!"
 
 
+    
