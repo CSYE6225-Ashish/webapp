@@ -156,8 +156,83 @@ The deployment script performs the following tasks:
 5. **Application Deployment:** Unzips the application to `/opt/csye6225`.
 6. **Permission Management:** Updates the permissions for the directory and its contents to ensure proper access control.
 
+---
 
-## pr-checks with Github Actions...
+# PR Check Test Workflow
+
+This GitHub Actions workflow is designed to run automated tests on your repository whenever a pull request is created or updated. It sets up a MySQL service, configures environment variables, installs dependencies, and runs tests for your Node.js application.
+
+## Workflow Overview
+
+The workflow does the following:
+
+1. **Check out the repository**: Pulls the latest changes from the pull request branch.
+2. **Set environment variables**: Uses secrets stored in GitHub to set up environment variables needed for testing.
+3. **Start MySQL service**: Starts the MySQL database service.
+4. **Set up Node.js**: Installs the required version of Node.js to run the application and tests.
+5. **Install dependencies**: Runs `npm install` to install necessary packages.
+6. **Wait for MySQL to be ready**: Ensures MySQL is up and running before proceeding with database initialization and tests.
+7. **Initialize MySQL database**: Creates the test database if it doesn't exist.
+8. **Run tests**: Executes your tests using `npm test`.
+
+### Workflow Trigger
+
+This workflow is triggered on the following event:
+- **Pull request** targeting the `main` branch.
+
+### Workflow Steps
+
+1. **Checkout Repository**  
+   The repository code is checked out using the `actions/checkout@v3` action so that the workflow can interact with the code in the pull request.
+
+2. **Set Environment Variables for Tests**  
+   The necessary environment variables are set by creating a `.env` file. These variables are taken from GitHub Secrets to avoid exposing sensitive data, such as database credentials.
+   
+   - `DB_USERNAME`: The MySQL root username.
+   - `DB_PASSWORD`: The MySQL root password.
+   - `DB_HOST`: The host of the MySQL service.
+   - `ENV`: The environment (e.g., `production`, `development`).
+   - `DB_NAME_TEST`: The name of the test database to be used.
+
+3. **Enable MySQL Service**  
+   The MySQL service is started using `systemctl` to ensure it's ready to accept connections.
+
+4. **Set Up Node.js**  
+   The required version of Node.js is set up using the `actions/setup-node@v3` action. In this case, Node.js version 20 is installed.
+
+5. **Install Dependencies**  
+   The `npm install` command is executed to install the required Node.js dependencies for the project.
+
+6. **Wait for MySQL to Be Ready**  
+   The workflow waits for MySQL to be ready by using `mysqladmin ping`. It tries for 30 attempts, with a 2-second interval between each attempt.
+
+7. **Initialize MySQL Database as Root**  
+   Once MySQL is ready, the database is initialized. The test database is created (if it doesn't already exist) using the root MySQL credentials stored in GitHub Secrets.
+
+8. **Run Tests**  
+   Finally, `npm test` is run to execute the application tests to ensure that everything is functioning correctly.
+
+## Prerequisites
+
+Before using this workflow, make sure the following are set up in your GitHub repository:
+
+- **MySQL**: Ensure that MySQL is properly configured in your project.
+- **Node.js**: This workflow is set to use Node.js version `20`. You can update this version if required.
+- **GitHub Secrets**: The following secrets must be configured in your GitHub repository:
+  - `DB_USER_ROOT`: MySQL root username.
+  - `DB_ROOT_PASSWORD`: MySQL root password.
+  - `DB_HOST`: Host for MySQL connection (usually `localhost` or `127.0.0.1`).
+  - `ENV`: Your environment (e.g., `production`, `development`).
+  - `DB_NAME_TEST`: The name of the database used for tests.
+
+## How to Use
+
+1. **Set up GitHub Secrets**: In your GitHub repository, go to **Settings** > **Secrets** and add the necessary secrets (as mentioned in the Prerequisites section).
+2. **Create or update the workflow file**: Place the `.yml` file (from the code you provided) in the `.github/workflows/` directory of your repository.
+3. **Push changes**: Once your workflow is set up, push changes to the repository.
+4. **Create a pull request**: Whenever a pull request is opened or updated targeting the `main` branch, the workflow will automatically run, setting up MySQL, installing dependencies, and executing tests.
+
+
 
 
 ## Conclusion

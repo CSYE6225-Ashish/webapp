@@ -23,7 +23,6 @@ const performHealthCheck = async (req, res) => {
 
     try {
         await sequelize.authenticate();
-        await sequelize.sync();
         await HealthCheck.create({ Datetime: new Date().toISOString() });
 
         return res.status(200).end();

@@ -11,12 +11,22 @@ const port = process.env.PORT || 8080;
 
 app.disable('x-powered-by');
 
+sequelize.sync().then(
+  () => {
+      console.log("DB sync")
+  }).catch(
+  () => {
+      console.log("Sync failed!")
+  })
+
 
 app.use('/', middleware, healthCheckRoutes);
 
 
 const server = app.listen(port, () => {
   console.log(`App listening on the port ${port}`);
+  
+  
 });
 
 
