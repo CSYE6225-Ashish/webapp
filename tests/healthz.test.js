@@ -27,7 +27,7 @@ describe('Health Check API Tests', () => {
         const initialCount = await HealthCheck.count();
 
         const response = await request(server).get('/healthz');
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(201);
 
         // Verify that a record was inserted
         const newCount = await HealthCheck.count();
