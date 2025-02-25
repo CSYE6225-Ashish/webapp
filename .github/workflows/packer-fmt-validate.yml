@@ -52,7 +52,7 @@ jobs:
           sudo npm install
           sudo apt-get install -y unzip
           zip -r webapp.zip .env .
-          cp -r webapp.zip /packer
+          cp -r webapp.zip packer
         shell: bash
 
       - name: Check Packer format

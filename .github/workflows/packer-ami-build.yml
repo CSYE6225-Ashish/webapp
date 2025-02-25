@@ -65,7 +65,7 @@ jobs:
           sudo npm install
           sudo apt-get install -y unzip
           zip -r webapp.zip .env .
-          cp -r webapp.zip src/packer
+          cp -r webapp.zip packer
         shell: bash
 
       - name: Copy webapp.zip to packer directory
