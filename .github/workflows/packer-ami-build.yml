@@ -1,6 +1,5 @@
 name: Packer Build
-
-on:
+'on':
   pull_request:
     types:
       - closed
@@ -13,22 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Packer AMI Build
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      AWS_INSTANCE_TYPE: ${{ secrets.AWS_INSTANCE_TYPE }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
-      AMI_NAME_PREFIX: ${{ secrets.AMI_NAME_PREFIX }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-
-    
+      AWS_REGION: '${{ secrets.AWS_REGION }}'
+      AWS_INSTANCE_TYPE: '${{ secrets.AWS_INSTANCE_TYPE }}'
+      AWS_ACCESS_KEY: '${{ secrets.AWS_ACCESS_KEY }}'
+      AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+      SOURCE_AMI: '${{ secrets.SOURCE_AMI }}'
+      AMI_NAME_PREFIX: '${{ secrets.AMI_NAME_PREFIX }}'
+      DB_NAME: '${{ secrets.DB_NAME }}'
+      DB_USER: '${{ secrets.DB_USERNAME }}'
+      DB_PASSWORD: '${{ secrets.DB_PASSWORD }}'
+      DB_HOST: '${{ secrets.DB_HOST }}'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-    
+
       - name: create .env file from secrets
         run: |
           echo "ENV=${{ secrets.ENV }}" >> .env
@@ -44,33 +41,97 @@ jobs:
           echo "USER_PASSWORD=${{ secrets.USER_PASSWORD }}" >> .env
           echo "APP_DIR=${{ secrets.APP_DIR }}" >> .env
           echo "ZIP_FILE=${{ secrets.ZIP_FILE }}" >> .env
-    
+          
       - name: Create dev.pkvars.hcl
         working-directory: packer
-        run: |
-          echo "aws_region       = \"${{ secrets.AWS_REGION }}\"" > dev.pkvars.hcl
-          echo "aws_instance_type = \"${{ secrets.AWS_INSTANCE_TYPE }}\"" >> dev.pkvars.hcl
-          echo "aws_access_key   = \"${{ secrets.AWS_ACCESS_KEY }}\"" >> dev.pkvars.hcl
-          echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> dev.pkvars.hcl
-          echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
-          echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
+        run: >
+          echo "aws_region       = \"${{ secrets.AWS_REGION }}\"" >
+          dev.pkvars.hcl
+
+          echo "aws_instance_type = \"${{ secrets.AWS_INSTANCE_TYPE }}\"" >>
+          dev.pkvars.hcl
+
+          echo "aws_access_key   = \"${{ secrets.AWS_ACCESS_KEY }}\"" >>
+          dev.pkvars.hcl
+
+          echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >>
+          dev.pkvars.hcl
+
+          echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >>
+          dev.pkvars.hcl
+
+          echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >>
+          dev.pkvars.hcl
+
           echo "db_name          = \"${{ secrets.DB_NAME }}\"" >> dev.pkvars.hcl
-          echo "db_user          = \"${{ secrets.DB_USERNAME }}\"" >> dev.pkvars.hcl
-          echo "db_password      = \"${{ secrets.DB_PASSWORD }}\"" >> dev.pkvars.hcl
+
+          echo "db_user          = \"${{ secrets.DB_USERNAME }}\"" >>
+          dev.pkvars.hcl
+
+          echo "db_password      = \"${{ secrets.DB_PASSWORD }}\"" >>
+          dev.pkvars.hcl
+
           echo "db_host          = \"${{ secrets.DB_HOST }}\"" >> dev.pkvars.hcl
-          echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
+
+          echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >>
+          dev.pkvars.hcl
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
         with:
-          version: '1.12.0' 
+          version: 1.12.0
+
+      - name: Set Environment Variables for Tests
+        run: |
+          echo "DB_USERNAME=${{ secrets.DB_USER_ROOT }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "ENV =test" >> .env
+          echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
+
+      - name: Enable mysql service
+        run: sudo systemctl start mysql
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Wait for MySQL to be Ready
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 --silent; then
+              echo "MySQL is ready!"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+          
+      - name: Initialize MySQL Database as Root
+        run: >
+          sudo mysql -u${{secrets.DB_USER_ROOT}} -p${{ secrets.DB_ROOT_PASSWORD
+          }} <<EOF
+
+          CREATE DATABASE IF NOT EXISTS \`${{secrets.DB_NAME_TEST}}\`;
+
+          EOF
+
+      - name: Run Tests
+        run: |
+          npm test
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          aws-region: '${{ secrets.AWS_REGION }}'
 
       - name: Create webapp.zip from existing directory
         run: |
@@ -81,12 +142,11 @@ jobs:
           cp -r webapp.zip packer
         shell: bash
 
-
       - name: Run packer init
         working-directory: ./packer
         id: init
         run: packer init .
-
+        
       - name: Run packer validate
         working-directory: ./packer
         id: validate
@@ -95,4 +155,3 @@ jobs:
       - name: Build AMI
         working-directory: ./packer
         run: packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
-# 

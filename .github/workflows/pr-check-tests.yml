@@ -15,10 +15,10 @@ jobs:
 
       - name: Set Environment Variables for Tests
         run: |
-          echo "DB_USERNAME= ${{ secrets.DB_USER_ROOT }}" >> .env
-          echo "DB_PASSWORD= ${{ secrets.DB_ROOT_PASSWORD }}" >> .env
-          echo "DB_HOST= ${{ secrets.DB_HOST }}" >> .env
-          echo "ENV = ${{ secrets.ENV }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USER_ROOT }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "ENV=test" >> .env
           echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
 
 
