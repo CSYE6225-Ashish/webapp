@@ -59,6 +59,7 @@ jobs:
       - name: Run Tests
         run: |
           npm test
+          sudo rm -f .env
 
       - name: Create dev.pkvars.hcl
         working-directory: packer
