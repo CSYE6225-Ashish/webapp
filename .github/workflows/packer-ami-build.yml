@@ -36,21 +36,22 @@ jobs:
       - name: Create dev.pkvars.hcl
         working-directory: packer
         run: |
-          echo "aws_region       = \"${{ env.AWS_REGION }}\"" > dev.pkvars.hcl
-          echo "aws_instance_type = \"${{ env.AWS_INSTANCE_TYPE }}\"" >> dev.pkvars.hcl
-          echo "aws_access_key   = \"${{ env.AWS_ACCESS_KEY }}\"" >> dev.pkvars.hcl
-          echo "aws_secret_key   = \"${{ env.AWS_SECRET_KEY }}\"" >> dev.pkvars.hcl
-          echo "source_ami       = \"${{ env.SOURCE_AMI }}\"" >> dev.pkvars.hcl
-          echo "ami_name_prefix  = \"${{ env.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
-          echo "db_name          = \"${{ env.DB_NAME }}\"" >> dev.pkvars.hcl
-          echo "db_user          = \"${{ env.DB_USERNAME }}\"" >> dev.pkvars.hcl
-          echo "db_password      = \"${{ env.DB_PASSWORD }}\"" >> dev.pkvars.hcl
-          echo "db_host          = \"${{ env.DB_HOST }}\"" >> dev.pkvars.hcl
-          echo "dev_user         = \"${{ env.DEV_USER }}\"" >> dev.pkvars.hcl
+          echo "aws_region       = \"${{ secrets.AWS_REGION }}\"" > dev.pkvars.hcl
+          echo "aws_instance_type = \"${{ secrets.AWS_INSTANCE_TYPE }}\"" >> dev.pkvars.hcl
+          echo "aws_access_key   = \"${{ secrets.AWS_ACCESS_KEY }}\"" >> dev.pkvars.hcl
+          echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_KEY }}\"" >> dev.pkvars.hcl
+          echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
+          echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
+          echo "db_name          = \"${{ secrets.DB_NAME }}\"" >> dev.pkvars.hcl
+          echo "db_user          = \"${{ secrets.DB_USERNAME }}\"" >> dev.pkvars.hcl
+          echo "db_password      = \"${{ secrets.DB_PASSWORD }}\"" >> dev.pkvars.hcl
+          echo "db_host          = \"${{ secrets.DB_HOST }}\"" >> dev.pkvars.hcl
+          echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
 
-      - name: Setup packer
-        uses: hashicorp/setup-packer@main
-        id: setup
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v2
+        with:
+          version: '1.12.0' 
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -68,20 +69,17 @@ jobs:
           cp -r webapp.zip packer
         shell: bash
 
-      - name: Copy webapp.zip to packer directory
-        run: cp webapp.zip ./packer/
 
       - name: Run packer init
         working-directory: ./packer
         id: init
         run: packer init .
 
-      - name: Run packer validate
+      - name: Validate Packer template
         working-directory: ./packer
-        id: validate
-        run: packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+        run: |
+          packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
 
       - name: Build AMI
         working-directory: ./packer
         run: packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
-# 
