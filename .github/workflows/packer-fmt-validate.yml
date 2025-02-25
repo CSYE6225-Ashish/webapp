@@ -46,6 +46,13 @@ jobs:
         with:
           version: '1.12.0'
 
+     
+
+      - name: Check Packer format
+        working-directory: ./packer
+        run: |
+          packer fmt -check webapp-image.pkr.hcl
+
       - name: Create webapp.zip from existing directory
         run: |
           sudo apt-get update -y
@@ -54,11 +61,6 @@ jobs:
           zip -r webapp.zip .env .
           cp -r webapp.zip packer
         shell: bash
-
-      - name: Check Packer format
-        working-directory: ./packer
-        run: |
-          packer fmt -check webapp-image.pkr.hcl
 
       - name: Initialize Packer template
         working-directory: ./packer

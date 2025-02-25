@@ -58,7 +58,7 @@ variable "dev_user" {}
 
 # Define the AWS builder
 source "amazon-ebs" "aws" {
-  region        = var.aws_region2
+  region        = var.aws_region
   source_ami    = var.source_ami
   instance_type = var.aws_instance_type
   ssh_username  = "ubuntu"
