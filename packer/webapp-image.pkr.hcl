@@ -11,7 +11,7 @@ packer {
 
 # AWS Variables
 variable "aws_region" {
-          default = env("AWS_REGION")
+  default = env("AWS_REGION")
 }
 
 variable "aws_instance_type" {
@@ -58,7 +58,7 @@ variable "dev_user" {}
 
 # Define the AWS builder
 source "amazon-ebs" "aws" {
-  region        = var.aws_region
+  region        = var.aws_region2
   source_ami    = var.source_ami
   instance_type = var.aws_instance_type
   ssh_username  = "ubuntu"
