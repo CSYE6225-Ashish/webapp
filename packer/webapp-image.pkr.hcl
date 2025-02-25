@@ -11,7 +11,7 @@ packer {
 
 # AWS Variables
 variable "aws_region" {
-  default = env("AWS_REGION")
+    default = env("AWS_REGION")
 }
 
 variable "aws_instance_type" {
