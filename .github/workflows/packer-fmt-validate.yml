@@ -28,6 +28,7 @@ jobs:
       - name: Create dev.pkvars.hcl
         working-directory: packer
         run: |
+          touch dev.pkvars.hcl
           echo "aws_region       = \"${{ env.AWS_REGION }}\"" > packer/dev.pkvars.hcl
           echo "aws_instance_type = \"${{ env.AWS_INSTANCE_TYPE }}\"" >> dev.pkvars.hcl
           echo "aws_access_key   = \"${{ env.AWS_ACCESS_KEY }}\"" >> dev.pkvars.hcl
