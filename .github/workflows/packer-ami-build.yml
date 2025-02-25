@@ -12,6 +12,17 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: Packer AMI Build
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_INSTANCE_TYPE: ${{ secrets.AWS_INSTANCE_TYPE }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
+      AMI_NAME_PREFIX: ${{ secrets.AMI_NAME_PREFIX }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
     
     steps:
       - name: Checkout Code
