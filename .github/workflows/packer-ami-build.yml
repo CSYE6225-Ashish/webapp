@@ -26,21 +26,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: create .env file from secrets
-        run: |
-          echo "ENV=${{ secrets.ENV }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_NAME_TEST=${{ secrets.DB_NAME_TEST }}" >> .env
-          echo "TABLE_NAME=${{ secrets.TABLE_NAME }}" >> .env
-          echo "GROUP_NAME=${{ secrets.GROUP_NAME }}" >> .env
-          echo "USER_NAME=${{ secrets.USER_NAME }}" >> .env
-          echo "USER_PASSWORD=${{ secrets.USER_PASSWORD }}" >> .env
-          echo "APP_DIR=${{ secrets.APP_DIR }}" >> .env
-          echo "ZIP_FILE=${{ secrets.ZIP_FILE }}" >> .env
+      
           
       - name: Create dev.pkvars.hcl
         working-directory: packer
@@ -115,8 +101,7 @@ jobs:
           
       - name: Initialize MySQL Database as Root
         run: >
-          sudo mysql -u${{secrets.DB_USER_ROOT}} -p${{ secrets.DB_ROOT_PASSWORD
-          }} <<EOF
+          sudo mysql -u${{secrets.DB_USER_ROOT}} -p${{ secrets.DB_ROOT_PASSWORD }} <<EOF
 
           CREATE DATABASE IF NOT EXISTS \`${{secrets.DB_NAME_TEST}}\`;
 
@@ -125,6 +110,21 @@ jobs:
       - name: Run Tests
         run: |
           npm test
+          - name: create .env file from secrets
+          run: |
+            echo "ENV=${{ secrets.ENV }}" >> .env
+            echo "PORT=${{ secrets.PORT }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "DB_NAME_TEST=${{ secrets.DB_NAME_TEST }}" >> .env
+            echo "TABLE_NAME=${{ secrets.TABLE_NAME }}" >> .env
+            echo "GROUP_NAME=${{ secrets.GROUP_NAME }}" >> .env
+            echo "USER_NAME=${{ secrets.USER_NAME }}" >> .env
+            echo "USER_PASSWORD=${{ secrets.USER_PASSWORD }}" >> .env
+            echo "APP_DIR=${{ secrets.APP_DIR }}" >> .env
+            echo "ZIP_FILE=${{ secrets.ZIP_FILE }}" >> .env
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
