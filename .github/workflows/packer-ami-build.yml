@@ -18,11 +18,12 @@ jobs:
 
       - name: Set Environment Variables for Tests
         run: |
-          echo "DB_USERNAME=${{ secrets.DB_USER_ROOT }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "ENV =test" >> .env
-          echo "DB_NAME_TEST=${{secrets.DB_NAME_TEST}}" >> .env
+          echo "DB_USERNAME=\"${{ secrets.DB_USER_ROOT }}\"" >> .env
+          echo "DB_PASSWORD=\"${{ secrets.DB_ROOT_PASSWORD }}\"" >> .env
+          echo "DB_HOST=\"${{ secrets.DB_HOST }}\"" >> .env
+          echo "ENV=\"test\"" >> .env
+          echo "DB_NAME_TEST=\"${{ secrets.DB_NAME_TEST }}\"" >> .env
+          
 
       - name: Enable mysql service
         run: sudo systemctl start mysql
@@ -81,21 +82,22 @@ jobs:
         with:
           version: '1.12.0' 
 
-      - name: create .env file from secrets
+      - name: Create .env file from secrets
         run: |
-          echo "ENV=${{ secrets.ENV }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_NAME_TEST=${{ secrets.DB_NAME_TEST }}" >> .env
-          echo "TABLE_NAME=${{ secrets.TABLE_NAME }}" >> .env
-          echo "GROUP_NAME=${{ secrets.GROUP_NAME }}" >> .env
-          echo "USER_NAME=${{ secrets.USER_NAME }}" >> .env
-          echo "USER_PASSWORD=${{ secrets.USER_PASSWORD }}" >> .env
-          echo "APP_DIR=${{ secrets.APP_DIR }}" >> .env
-          echo "ZIP_FILE=${{ secrets.ZIP_FILE }}" >> .env
+          echo "ENV=\"${{ secrets.ENV }}\"" >> .env
+          echo "PORT=\"${{ secrets.PORT }}\"" >> .env
+          echo "DB_USERNAME=\"${{ secrets.DB_USERNAME }}\"" >> .env
+          echo "DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\"" >> .env
+          echo "DB_HOST=\"${{ secrets.DB_HOST }}\"" >> .env
+          echo "DB_NAME=\"${{ secrets.DB_NAME }}\"" >> .env
+          echo "DB_NAME_TEST=\"${{ secrets.DB_NAME_TEST }}\"" >> .env
+          echo "TABLE_NAME=\"${{ secrets.TABLE_NAME }}\"" >> .env
+          echo "GROUP_NAME=\"${{ secrets.GROUP_NAME }}\"" >> .env
+          echo "USER_NAME=\"${{ secrets.USER_NAME }}\"" >> .env
+          echo "USER_PASSWORD=\"${{ secrets.USER_PASSWORD }}\"" >> .env
+          echo "APP_DIR=\"${{ secrets.APP_DIR }}\"" >> .env
+          echo "ZIP_FILE=\"${{ secrets.ZIP_FILE }}\"" >> .env
+        
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
