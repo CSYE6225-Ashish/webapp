@@ -58,7 +58,7 @@ jobs:
       - name: Check Packer format
         working-directory: ./packer
         run: |
-          packer fmt --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+          packer fmt -check webapp-image.pkr.hcl
 
       - name: Initialize Packer template
         working-directory: ./packer
