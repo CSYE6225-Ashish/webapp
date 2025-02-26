@@ -80,8 +80,7 @@ jobs:
       - name: Create gcpsecrets.json
         working-directory: packer
         run: |
-          echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} >> gcpsecrets.json
-          
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcpsecrets.json
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
