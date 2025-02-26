@@ -78,4 +78,4 @@ jobs:
       - name: Validate Packer template
         working-directory: ./packer
         run: |
-          packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+          packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"  webapp-image.pkr.hcl

@@ -136,8 +136,8 @@ jobs:
       - name: Run packer validate
         working-directory: ./packer
         id: validate
-        run: packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+        run: packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"  webapp-image.pkr.hcl
 
       - name: Build AMI
         working-directory: ./packer
-        run: packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+        run: packer build --var-file=dev.pkvars.hcl --var "gcp_credentials_json=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"  webapp-image.pkr.hcl
