@@ -78,9 +78,8 @@ variable "zone" {
   default = "us-central1-a"
 }
 
-variable "credentials_file" {
+variable "gcp_credentials_json" {
   type    = string
-  default = "gcpsecrets.json"
 }
 
 variable "source_image_family" {
@@ -130,7 +129,7 @@ source "googlecompute" "gce" {
   ssh_username        = "packer"
   image_family        = "custom-family"
   image_description   = "Custom GCP image built with Packer"
-  account_file        = var.credentials_file
+  credentials_json    = var.gcp_credentials_json
 }
 
 
