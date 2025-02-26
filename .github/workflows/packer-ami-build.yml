@@ -150,3 +150,4 @@ jobs:
         working-directory: ./packer
         run: |
           packer build --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
+# Test build again after iam changes
