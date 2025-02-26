@@ -206,7 +206,7 @@ build {
   post-processor "shell-local" {
     only = ["googlecompute.gce"] # Ensures this only runs for GCP images
     inline = [
-      "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_demo_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
+      "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_dev_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
     ]
   }
 }
