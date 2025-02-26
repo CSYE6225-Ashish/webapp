@@ -40,6 +40,11 @@ jobs:
           echo "db_host          = \"${{ env.DB_HOST }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ env.DEV_USER }}\"" >> dev.pkvars.hcl
 
+      - name: Create gcpsecrets.json
+        working-directory: packer
+        run: |
+            echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > gcpsecrets.json
+
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2

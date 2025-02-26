@@ -77,6 +77,12 @@ jobs:
           echo "db_host          = \"${{ secrets.DB_HOST }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
 
+      - name: Create gcpsecrets.json
+        working-directory: packer
+        run: |
+          echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > gcpsecrets.json
+          
+
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
         with:
@@ -97,6 +103,7 @@ jobs:
           echo "USER_PASSWORD=\"${{ secrets.USER_PASSWORD }}\"" >> .env
           echo "APP_DIR=\"${{ secrets.APP_DIR }}\"" >> .env
           echo "ZIP_FILE=\"${{ secrets.ZIP_FILE }}\"" >> .env
+
         
 
       - name: Configure AWS Credentials
@@ -105,6 +112,13 @@ jobs:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: '${{ secrets.AWS_REGION }}'
+
+      - name: Configure GCP Credentials
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+
 
       - name: Create webapp.zip from existing directory
         run: |
