@@ -76,12 +76,16 @@ jobs:
           echo "db_password      = \"${{ secrets.DB_PASSWORD }}\"" >> dev.pkvars.hcl
           echo "db_host          = \"${{ secrets.DB_HOST }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
+          echo "gcp_demo_project_id = \"${{ secrets.GCP_DEMO_PROJECT_ID }}\"" >> dev.pkvars.hcl
+          echo "gcp_image_user_email = \"${{ secrets.GCP_IMAGE_USER_EMAIL }}\"" >> dev.pkvars.hcl
+          echo "gcp_dev_project_id = \"${{ secrets.GCP_DEV_PROJECT_ID }}\"" >> dev.pkvars.hcl
+          echo "gcp_source_image_family = \"${{ secrets.GCP_SOURCE_IMAGE_FAMILY }}\"" >> dev.pkvars.hcl
+          echo "gcp_machine_type = \"${{ secrets.GCP_MACHINE_TYPE }}\"" >> dev.pkvars.hcl
+          echo "gcp_source_image = \"${{ secrets.GCP_SOURCE_IMAGE }}\"" >> dev.pkvars.hcl
+          echo "gcp_zone = \"${{ secrets.GCP_ZONE }}\"" >> dev.pkvars.hcl
+          
 
-      - name: Create gcpsecrets.json
-        working-directory: packer
-        run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcpsecrets.json
-
+      
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
         with:
@@ -140,7 +144,7 @@ jobs:
         run: |
           packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
 
-      - name: Validate Packer template
+      - name: Build GCP AND AWS AMI
         env:
          GCP_CREDENTIALS_FILE: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         working-directory: ./packer
