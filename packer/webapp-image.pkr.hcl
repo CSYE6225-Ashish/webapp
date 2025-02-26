@@ -67,13 +67,13 @@ variable "dev_user" {}
 
 #GCP VARIABLES
 
-variable "project_id" {
+variable "gcp_dev_project_id" {
   type    = string
   default = "dev-csye6225-452002"
 }
 
 
-variable "zone" {
+variable "gcp_zone" {
   type    = string
   default = "us-central1-a"
 }
@@ -82,15 +82,22 @@ variable "gcp_credentials_json" {
   type = string
 }
 
-variable "source_image_family" {
+variable "gcp_source_image_family" {
   type    = string
   default = "ubuntu-minimal-2404-lts-amd64"
 }
+variable "gcp_machine_type" {
+  type    = string
+  default = "e2-small"
+}
 
-variable "source_image" {
+variable "gcp_source_image" {
   type    = string
   default = "ubuntu-minimal-2404-noble-amd64-v20250221a X86_64 "
 }
+
+
+
 
 # Define the AWS builder
 source "amazon-ebs" "aws" {
@@ -119,13 +126,15 @@ source "amazon-ebs" "aws" {
 
   ami_users = [var.dev_user]
 }
-
+locals {
+  image_timestamp = timestamp() # Generates a single consistent timestamp
+}
 source "googlecompute" "gce" {
-  project_id          = var.project_id
-  image_name          = var.ami_name_prefix
-  source_image_family = var.source_image_family
-  machine_type        = "e2-small"
-  zone                = var.zone
+  project_id          = var.gcp_dev_project_id
+  image_name          = "${var.ami_name_prefix}-${local.image_timestamp}"
+  source_image_family = var.gcp_source_image_family
+  machine_type        = var.gcp_machine_type
+  zone                = var.gcp_zone
   ssh_username        = "packer"
   image_family        = "custom-family"
   image_description   = "Custom GCP image built with Packer"
@@ -182,6 +191,15 @@ build {
       "sudo systemctl enable webapp.service"
     ]
   }
+
+  post-processor "shell-local" {
+    only = ["googlecompute.gce"] # Ensures this only runs for GCP images
+    inline = [
+      "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_demo_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
+    ]
+  }
+
+
 
 
 
