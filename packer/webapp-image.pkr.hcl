@@ -127,7 +127,7 @@ source "amazon-ebs" "aws" {
   ami_users = [var.dev_user]
 }
 locals {
-  image_timestamp = timestamp() # Generates a single consistent timestamp
+  image_timestamp = lower(replace(timestamp(), "/[-TZ:]/", "")) # Removes invalid characters
 }
 source "googlecompute" "gce" {
   project_id          = var.gcp_dev_project_id
