@@ -40,6 +40,13 @@ jobs:
           echo "db_host          = \"${{ env.DB_HOST }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ env.DEV_USER }}\"" >> dev.pkvars.hcl
 
+      - name: Create gcpsecrets.json
+        working-directory: packer
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcpsecrets.json
+        
+
+
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
@@ -69,6 +76,8 @@ jobs:
       
 
       - name: Validate Packer template
+        env:
+          GCP_CREDENTIALS_FILE: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         working-directory: ./packer
         run: |
-          packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+          packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
