@@ -79,7 +79,7 @@ variable "zone" {
 }
 
 variable "gcp_credentials_json" {
-  type    = string
+  type = string
 }
 
 variable "source_image_family" {
