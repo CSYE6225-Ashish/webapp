@@ -6,7 +6,12 @@ packer {
       version = ">= 1.3.4"
       source  = "github.com/hashicorp/amazon"
     }
+    googlecompute = {
+      source  = "github.com/hashicorp/googlecompute"
+      version = "~> 1"
+    }
   }
+
 }
 
 # AWS Variables
@@ -30,6 +35,10 @@ variable "aws_secret_key" {
 variable "source_ami" {
   default = env("SOURCE_AMI")
 }
+
+#GCP VARIABLES
+
+
 
 # Common Variables
 variable "ami_name_prefix" {
@@ -55,6 +64,34 @@ variable "db_host" {
 
 variable "dev_user" {}
 
+
+#GCP VARIABLES
+
+variable "project_id" {
+  type    = string
+  default = "dev-csye6225-452002"
+}
+
+
+variable "zone" {
+  type    = string
+  default = "us-central1-a"
+}
+
+variable "credentials_file" {
+  type    = string
+  default = "gcpsecrets.json"
+}
+
+variable "source_image_family" {
+  type    = string
+  default = "ubuntu-minimal-2404-lts-amd64"
+}
+
+variable "source_image" {
+  type    = string
+  default = "ubuntu-minimal-2404-noble-amd64-v20250221a X86_64 "
+}
 
 # Define the AWS builder
 source "amazon-ebs" "aws" {
@@ -82,15 +119,27 @@ source "amazon-ebs" "aws" {
   }
 
   ami_users = [var.dev_user]
-
-
-
 }
+
+source "googlecompute" "gce" {
+  project_id          = var.project_id
+  image_name          = var.ami_name_prefix
+  source_image_family = var.source_image_family
+  machine_type        = "e2-small"
+  zone                = var.zone
+  ssh_username        = "packer"
+  image_family        = "custom-family"
+  image_description   = "Custom GCP image built with Packer"
+  account_file        = var.credentials_file
+}
+
+
 
 # Define the build
 build {
   sources = [
     "source.amazon-ebs.aws",
+    "source.googlecompute.gce",
   ]
 
   provisioner "shell" {
