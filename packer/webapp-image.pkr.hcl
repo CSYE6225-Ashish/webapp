@@ -95,6 +95,16 @@ variable "gcp_source_image" {
   type    = string
   default = "ubuntu-minimal-2404-noble-amd64-v20250221a X86_64 "
 }
+variable "gcp_image_user_email" {
+  type    = string
+  default = null
+}
+
+variable "gcp_demo_project_id" {
+  type    = string
+  default = null
+}
+
 
 
 
@@ -127,8 +137,9 @@ source "amazon-ebs" "aws" {
   ami_users = [var.dev_user]
 }
 locals {
-  image_timestamp = lower(replace(timestamp(), "/[-TZ:]/", "")) # Removes invalid characters
+  image_timestamp = formatdate("YYYYMMDDHHmmss", timestamp()) # Generates YYYYMMDDHHmmss
 }
+
 source "googlecompute" "gce" {
   project_id          = var.gcp_dev_project_id
   image_name          = "${var.ami_name_prefix}-${local.image_timestamp}"
