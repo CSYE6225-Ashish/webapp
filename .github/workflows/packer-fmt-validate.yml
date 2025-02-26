@@ -80,4 +80,4 @@ jobs:
           GCP_CREDENTIALS_FILE: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         working-directory: ./packer
         run: |
-          packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"  webapp-image.pkr.hcl
+          packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
