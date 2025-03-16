@@ -1,5 +1,6 @@
 [Unit]
 Description = webapp service
+After=cloud-final.service
 ConditionPathExists=/opt/csye6225/.env
 After=network.target
 
