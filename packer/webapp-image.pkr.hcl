@@ -184,9 +184,6 @@ build {
     inline = [
       "sudo unzip -o -q /tmp/webapp.zip -d /opt/csye6225",
       "sudo cp /tmp/webapp.service /etc/systemd/system/",
-      "sudo mysql -e \"CREATE DATABASE ${var.db_name};\"",
-      "sudo mysql -e \"ALTER USER '${var.db_user}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_password}';\"",
-      "sudo systemctl restart mysql"
     ]
   }
 
@@ -204,7 +201,7 @@ build {
   }
 
   post-processor "shell-local" {
-    only = ["googlecompute.gce"] # Ensures this only runs for GCP images
+    only = ["googlecompute.gce"]
     inline = [
       "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_dev_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
     ]

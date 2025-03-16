@@ -3,4 +3,4 @@
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt-get install unzip -y
-sudo apt install nodejs npm mysql-server -y
+sudo apt install nodejs npm -y
