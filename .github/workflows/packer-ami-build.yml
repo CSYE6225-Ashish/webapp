@@ -71,10 +71,6 @@ jobs:
           echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> dev.pkvars.hcl
           echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
           echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
-          echo "db_name          = \"${{ secrets.DB_NAME }}\"" >> dev.pkvars.hcl
-          echo "db_user          = \"${{ secrets.DB_USERNAME }}\"" >> dev.pkvars.hcl
-          echo "db_password      = \"${{ secrets.DB_PASSWORD }}\"" >> dev.pkvars.hcl
-          echo "db_host          = \"${{ secrets.DB_HOST }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
           echo "gcp_demo_project_id = \"${{ secrets.GCP_DEMO_PROJECT_ID }}\"" >> dev.pkvars.hcl
           echo "gcp_image_user_email = \"${{ secrets.GCP_IMAGE_USER_EMAIL }}\"" >> dev.pkvars.hcl
@@ -91,21 +87,6 @@ jobs:
         with:
           version: '1.12.0' 
 
-      - name: Create .env file from secrets
-        run: |
-          echo "ENV=\"${{ secrets.ENV }}\"" >> .env
-          echo "PORT=\"${{ secrets.PORT }}\"" >> .env
-          echo "DB_USERNAME=\"${{ secrets.DB_USERNAME }}\"" >> .env
-          echo "DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\"" >> .env
-          echo "DB_HOST=\"${{ secrets.DB_HOST }}\"" >> .env
-          echo "DB_NAME=\"${{ secrets.DB_NAME }}\"" >> .env
-          echo "DB_NAME_TEST=\"${{ secrets.DB_NAME_TEST }}\"" >> .env
-          echo "TABLE_NAME=\"${{ secrets.TABLE_NAME }}\"" >> .env
-          echo "GROUP_NAME=\"${{ secrets.GROUP_NAME }}\"" >> .env
-          echo "USER_NAME=\"${{ secrets.USER_NAME }}\"" >> .env
-          echo "USER_PASSWORD=\"${{ secrets.USER_PASSWORD }}\"" >> .env
-          echo "APP_DIR=\"${{ secrets.APP_DIR }}\"" >> .env
-          echo "ZIP_FILE=\"${{ secrets.ZIP_FILE }}\"" >> .env
 
         
 
@@ -128,7 +109,7 @@ jobs:
           sudo apt-get update -y
           sudo npm install
           sudo apt-get install -y unzip
-          zip -r webapp.zip .env .
+          zip -r webapp.zip .
           cp -r webapp.zip packer
         shell: bash
 
@@ -150,4 +131,3 @@ jobs:
         working-directory: ./packer
         run: |
           packer build --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
-# Test build again after iam changes
