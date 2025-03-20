@@ -32,21 +32,7 @@ const performHealthCheck = async (req, res) => {
     }
 };
 
-const unsupportedMethod = (req, res) => {
-    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('X-Content-Type-Options', 'nosniff');
-    res.status(405).end();
-}
 
-const methodNotFound = (req, res) => {
-    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('X-Content-Type-Options', 'nosniff');
-    res.status(404).end();
-}
 module.exports = {
     performHealthCheck,
-    unsupportedMethod,
-    methodNotFound,
 };
