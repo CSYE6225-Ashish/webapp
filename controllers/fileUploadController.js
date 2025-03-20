@@ -50,7 +50,7 @@ const s3Client = new S3Client({
           });
   
           // Single response point
-          res.status(200).json({
+          res.status(201).json({
             file_name: fileRecord.file_name,
             id: fileRecord.id,
             url: fileRecord.url,
@@ -117,7 +117,7 @@ const s3Client = new S3Client({
     try{
 
       const fileRecord = await File.findByPk(id);
-      res.status(201).json({
+      res.status(200).json({
       file_name: fileRecord.file_name,
       id: fileRecord.id,
       url: fileRecord.url,
