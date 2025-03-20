@@ -104,7 +104,6 @@ const s3Client = new S3Client({
   
       // 4. Return deleted record in specified format
       res.status(204).end();
-  
     } catch (error) {
       console.error('Delete error:', error);
       if (!res.headersSent) {
@@ -116,11 +115,8 @@ const s3Client = new S3Client({
   const getFile = async(req,res)=>{
     const {id} = req.params;
     try{
-      console.log(`Received request to fetch file with ID: ${id}`);
+
       const fileRecord = await File.findByPk(id);
-
-  
-
       res.status(200).json({
       file_name: fileRecord.file_name,
       id: fileRecord.id,

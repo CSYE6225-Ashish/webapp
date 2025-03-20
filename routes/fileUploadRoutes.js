@@ -18,12 +18,12 @@ router.post('/:id',restrictedRoutesController.methodNotAllowed);
 router.delete('/',restrictedRoutesController.badRequrest);
 
 
-
 // allowed routes
 router.post('/',fileUploadController.uploadFiletoS3);
 router.get('/:id',fileUploadController.getFile);
 router.delete('/:id',fileUploadController.deleteFile);
 router.get('/',restrictedRoutesController.badRequrest);
 router.delete('/',restrictedRoutesController.badRequrest);
+
 
 module.exports = router;
