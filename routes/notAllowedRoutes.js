@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const healthCheckcontroller = require('../controllers/healthzController')
+const restrictedRoutesController = require('../controllers/restrictedRoutesController')
 
-router.all('*', healthCheckcontroller.methodNotFound); // all other routes not allowed
+router.all('*', restrictedRoutesController.methodNotFound); // all other routes not allowed
 
 module.exports = router;

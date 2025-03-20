@@ -16,12 +16,12 @@ const s3Client = new S3Client({
     try {
       upload(req, res, async (err) => {
         if (!req.file) {
-          return res.status(400).send('No file uploaded');
+          return res.status(400).end();
         }
         
         if (err) {
           console.error('Error processing file:', err);
-          return res.status(500).send('Error processing file');
+          return res.status(400).end();
         }
   
         try {
@@ -78,7 +78,7 @@ const s3Client = new S3Client({
       // 1. Find database record
       const fileRecord = await File.findByPk(id);
       if (!fileRecord) {
-        return res.status(404).json({ error: 'File not found' });
+        return res.status(404).end();
       }
   
       // 2. Delete all S3 objects with matching prefix
@@ -103,13 +103,7 @@ const s3Client = new S3Client({
       await fileRecord.destroy();
   
       // 4. Return deleted record in specified format
-      res.status(200).json({
-        file_name: fileRecord.file_name,
-        id: fileRecord.id,
-        url: fileRecord.url,
-        upload_date: fileRecord.upload_date
-      });
-  
+      res.status(204).end();
     } catch (error) {
       console.error('Delete error:', error);
       if (!res.headersSent) {
@@ -121,6 +115,7 @@ const s3Client = new S3Client({
   const getFile = async(req,res)=>{
     const {id} = req.params;
     try{
+
       const fileRecord = await File.findByPk(id);
       res.status(200).json({
       file_name: fileRecord.file_name,
@@ -130,7 +125,8 @@ const s3Client = new S3Client({
     })
 
     }catch (error) {
-      res.status(404)
+      res.status(404).end();
+      console.log(error)
     }
     
   }
