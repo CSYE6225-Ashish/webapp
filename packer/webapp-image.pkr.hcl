@@ -201,7 +201,7 @@ build {
 
   provisioner "file" {
     source      = "config.json"
-    destination = "/tmp"
+    destination = "/tmp/config.json"
   }
 
   provisioner "shell" {
