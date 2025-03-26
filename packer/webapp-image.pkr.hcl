@@ -201,7 +201,13 @@ build {
 
   provisioner "file" {
     source      = "config.json"
-    destination = "/opt/aws/amazon-cloudwatch-agent/bin/"
+    destination = "/tmp"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo cp /tmp/config.json /opt/aws/amazon-cloudwatch-agent/bin/",
+    ]
   }
 
 
