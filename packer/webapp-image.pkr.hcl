@@ -199,11 +199,9 @@ build {
     ]
   }
 
-  provisioner "shell" {
-    provisioner "file" {
-      source      = "config.json"
-      destination = "/opt/aws/amazon-cloudwatch-agent/bin/"
-    }
+  provisioner "file" {
+    source      = "config.json"
+    destination = "/opt/aws/amazon-cloudwatch-agent/bin/"
   }
 
 
