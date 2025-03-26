@@ -158,7 +158,7 @@ source "googlecompute" "gce" {
 build {
   sources = [
     "source.amazon-ebs.aws",
-    "source.googlecompute.gce",
+    # "source.googlecompute.gce",
   ]
 
   provisioner "shell" {
@@ -191,6 +191,19 @@ build {
     script = "./folderPermissions.sh"
   }
 
+  provisioner "shell" {
+    inline = [
+      "wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
+      "rm amazon-cloudwatch-agent.deb"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "config.json"
+    destination = "/opt/aws/amazon-cloudwatch-agent/bin/"
+  }
+
 
 
   provisioner "shell" {
@@ -200,10 +213,12 @@ build {
     ]
   }
 
-  post-processor "shell-local" {
-    only = ["googlecompute.gce"]
-    inline = [
-      "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_dev_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
-    ]
-  }
+
+
+  # post-processor "shell-local" {
+  #   only = ["googlecompute.gce"]
+  #   inline = [
+  #     "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_dev_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
+  #   ]
+  # }
 }

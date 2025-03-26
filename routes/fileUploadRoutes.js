@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const fileUploadController = require('../controllers/fileUploadController')
 const restrictedRoutesController = require('../controllers/restrictedRoutesController')
+const routeCounterMiddleware = require('../app/routeCounterMiddleware');
+
+// Get metrics for each route
+router.use(routeCounterMiddleware);
+
 
 //restricted routes
 router.head('/',restrictedRoutesController.unsupportedMethod);
