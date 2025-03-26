@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const healthCheckcontroller = require('../controllers/healthzController')
 const restrictedRoutesController = require('../controllers/restrictedRoutesController')
+const routeCounterMiddleware = require('../app/routeCounterMiddleware');
+
+// Get metrics for each route
+router.use(routeCounterMiddleware);
+
 
 //restricted routes
 router.post('/',restrictedRoutesController.unsupportedMethod);
