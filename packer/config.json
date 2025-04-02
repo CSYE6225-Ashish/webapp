@@ -25,10 +25,10 @@
                 ]
             }
         },
-        "log_stream_name": "cloudwatch_log_stream"
+        "log_stream_name": "cloudwatch_log_stream_review"
     },
     "metrics": {
-          "namespace": "csye6225",
+          "namespace": "csye6225_review",
           "metrics_collected": {
               "statsd": {
                   "service_address": ":8125",
