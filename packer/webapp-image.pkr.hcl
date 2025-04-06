@@ -62,6 +62,10 @@ variable "db_host" {
 variable "dev_user" {}
 
 
+locals {
+  image_timestamp = formatdate("YYYYMMDDHHmmss", timestamp()) # Generates YYYYMMDDHHmmss
+}
+
 # Define the AWS builder
 source "amazon-ebs" "aws" {
   region        = var.aws_region
@@ -89,9 +93,7 @@ source "amazon-ebs" "aws" {
 
   ami_users = [var.dev_user]
 }
-locals {
-  image_timestamp = formatdate("YYYYMMDDHHmmss", timestamp()) # Generates YYYYMMDDHHmmss
-}
+
 
 
 # Define the build
