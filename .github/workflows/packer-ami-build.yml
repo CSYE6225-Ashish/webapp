@@ -67,19 +67,11 @@ jobs:
         run: |
           echo "aws_region       = \"${{ secrets.AWS_REGION }}\"" > dev.pkvars.hcl
           echo "aws_instance_type = \"${{ secrets.AWS_INSTANCE_TYPE }}\"" >> dev.pkvars.hcl
-          echo "aws_access_key   = \"${{ secrets.AWS_ACCESS_KEY }}\"" >> dev.pkvars.hcl
-          echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> dev.pkvars.hcl
+          echo "aws_access_key   = \"${{ secrets.AWS_ACCESS_KEY_DEV }}\"" >> dev.pkvars.hcl
+          echo "aws_secret_key   = \"${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}\"" >> dev.pkvars.hcl
           echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
           echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
-          echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl
-          echo "gcp_demo_project_id = \"${{ secrets.GCP_DEMO_PROJECT_ID }}\"" >> dev.pkvars.hcl
-          echo "gcp_image_user_email = \"${{ secrets.GCP_IMAGE_USER_EMAIL }}\"" >> dev.pkvars.hcl
-          echo "gcp_dev_project_id = \"${{ secrets.GCP_DEV_PROJECT_ID }}\"" >> dev.pkvars.hcl
-          echo "gcp_source_image_family = \"${{ secrets.GCP_SOURCE_IMAGE_FAMILY }}\"" >> dev.pkvars.hcl
-          echo "gcp_machine_type = \"${{ secrets.GCP_MACHINE_TYPE }}\"" >> dev.pkvars.hcl
-          echo "gcp_source_image = \"${{ secrets.GCP_SOURCE_IMAGE }}\"" >> dev.pkvars.hcl
-          echo "gcp_zone = \"${{ secrets.GCP_ZONE }}\"" >> dev.pkvars.hcl
-          
+          echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl          
 
       
       - name: Set up Packer
@@ -90,19 +82,21 @@ jobs:
 
         
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials dev profile
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEV }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}'
           aws-region: '${{ secrets.AWS_REGION }}'
+          profile: dev
 
-      - name: Configure GCP Credentials
-        uses: 'google-github-actions/auth@v2'
+      - name: Configure AWS Credentials demo profile
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
-
-
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEMO }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}'
+          aws-region: '${{ secrets.AWS_REGION }}'
+          profile: demo
 
       - name: Create webapp.zip from existing directory
         run: |
@@ -119,15 +113,50 @@ jobs:
         run: packer init .
         
       - name: Validate Packer template
-        env:
-          GCP_CREDENTIALS_FILE: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         working-directory: ./packer
         run: |
-          packer validate --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
+          packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
 
-      - name: Build GCP AND AWS AMI
-        env:
-         GCP_CREDENTIALS_FILE: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        working-directory: ./packer
+
+      - name: Get and Set latest AMI verssion
         run: |
-          packer build --var-file=dev.pkvars.hcl --var "gcp_credentials_json=$GCP_CREDENTIALS_FILE" webapp-image.pkr.hcl
+         AMI_ID=$(aws ec2 describe-images \
+          --profile demo \
+          --filters "Name=name,Values=webapp-image-*" \
+          --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
+          --output text)
+          --profile demo
+          echo $(AMI_ID)
+      
+      - name: Create a new version of Launch template
+        run: |
+          AMI_ID=$(aws ec2 describe-images \
+            --profile demo \
+            --filters "Name=name,Values=webapp-image-*" \
+            --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
+            --output text)
+
+            echo $(AMI_ID)
+            
+          AWS_PAGER="" aws ec2 create-launch-template-version \
+            --launch-template-id ${{ vars.DEMO_LAUNCH_TEMPLATE_ID }} \
+            --source-version 1 \
+            --launch-template-data '{"ImageId":"'"${AMI_ID}"'"}' \
+            --profile demo \
+            --no-paginate \
+            --output json
+
+      
+      - name: Perform Instance refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --profile demo \
+            --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
+            --preferences MinHealthyPercentage=90 \
+            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
+
+
+
+
+
+

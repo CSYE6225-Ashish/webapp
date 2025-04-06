@@ -36,9 +36,6 @@ variable "source_ami" {
   default = env("SOURCE_AMI")
 }
 
-#GCP VARIABLES
-
-
 
 # Common Variables
 variable "ami_name_prefix" {
@@ -65,49 +62,9 @@ variable "db_host" {
 variable "dev_user" {}
 
 
-#GCP VARIABLES
-
-variable "gcp_dev_project_id" {
-  type    = string
-  default = "dev-csye6225-452002"
+locals {
+  image_timestamp = formatdate("YYYYMMDDHHmmss", timestamp()) # Generates YYYYMMDDHHmmss
 }
-
-
-variable "gcp_zone" {
-  type    = string
-  default = "us-central1-a"
-}
-
-variable "gcp_credentials_json" {
-  type = string
-}
-
-variable "gcp_source_image_family" {
-  type    = string
-  default = "ubuntu-minimal-2404-lts-amd64"
-}
-variable "gcp_machine_type" {
-  type    = string
-  default = "e2-small"
-}
-
-variable "gcp_source_image" {
-  type    = string
-  default = "ubuntu-minimal-2404-noble-amd64-v20250221a X86_64 "
-}
-variable "gcp_image_user_email" {
-  type    = string
-  default = null
-}
-
-variable "gcp_demo_project_id" {
-  type    = string
-  default = null
-}
-
-
-
-
 
 # Define the AWS builder
 source "amazon-ebs" "aws" {
@@ -119,7 +76,7 @@ source "amazon-ebs" "aws" {
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
 
-  ami_name = "${var.ami_name_prefix}-{{timestamp}}"
+  ami_name = "${var.ami_name_prefix}-${local.image_timestamp}"
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -136,21 +93,6 @@ source "amazon-ebs" "aws" {
 
   ami_users = [var.dev_user]
 }
-locals {
-  image_timestamp = formatdate("YYYYMMDDHHmmss", timestamp()) # Generates YYYYMMDDHHmmss
-}
-
-source "googlecompute" "gce" {
-  project_id          = var.gcp_dev_project_id
-  image_name          = "${var.ami_name_prefix}-${local.image_timestamp}"
-  source_image_family = var.gcp_source_image_family
-  machine_type        = var.gcp_machine_type
-  zone                = var.gcp_zone
-  ssh_username        = "packer"
-  image_family        = "custom-family"
-  image_description   = "Custom GCP image built with Packer"
-  credentials_json    = var.gcp_credentials_json
-}
 
 
 
@@ -158,7 +100,6 @@ source "googlecompute" "gce" {
 build {
   sources = [
     "source.amazon-ebs.aws",
-    # "source.googlecompute.gce",
   ]
 
   provisioner "shell" {
@@ -218,13 +159,4 @@ build {
       "sudo systemctl enable webapp.service"
     ]
   }
-
-
-
-  # post-processor "shell-local" {
-  #   only = ["googlecompute.gce"]
-  #   inline = [
-  #     "gcloud compute images add-iam-policy-binding ${var.ami_name_prefix}-${local.image_timestamp} --project=${var.gcp_dev_project_id} --member=serviceAccount:${var.gcp_image_user_email} --role=roles/compute.imageUser"
-  #   ]
-  # }
 }
