@@ -117,16 +117,6 @@ jobs:
         run: |
           packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
 
-
-      - name: Get and Set latest AMI verssion
-        run: |
-         AMI_ID=$(aws ec2 describe-images \
-          --profile demo \
-          --filters "Name=name,Values=webapp-image-*" \
-          --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
-          --output text)
-          --profile demo
-          echo $(AMI_ID)
       
       - name: Create a new version of Launch template
         run: |
@@ -136,7 +126,8 @@ jobs:
             --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
             --output text)
 
-            echo $(AMI_ID)
+            echo "AMI ID: $AMI_ID"
+
             
           AWS_PAGER="" aws ec2 create-launch-template-version \
             --launch-template-id ${{ vars.DEMO_LAUNCH_TEMPLATE_ID }} \
