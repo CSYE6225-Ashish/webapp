@@ -80,15 +80,7 @@ jobs:
           version: '1.12.0' 
 
 
-        
-
-      - name: Configure AWS Credentials dev profile
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEV }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}'
-          aws-region: '${{ secrets.AWS_REGION }}'
-          profile: dev
+      
 
       - name: Configure AWS Credentials demo profile
         uses: aws-actions/configure-aws-credentials@v2
@@ -116,12 +108,16 @@ jobs:
         working-directory: ./packer
         run: |
           packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+      
+      - name: Build AWS AMI
+        working-directory: ./packer
+        run: |
+          packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
 
       
       - name: Create a new version of Launch template
         run: |
           AMI_ID=$(aws ec2 describe-images \
-            --profile demo \
             --filters "Name=name,Values=webapp-image-*" \
             --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
             --output text)
@@ -133,7 +129,6 @@ jobs:
             --launch-template-id ${{ vars.DEMO_LAUNCH_TEMPLATE_ID }} \
             --source-version 1 \
             --launch-template-data '{"ImageId":"'"${AMI_ID}"'"}' \
-            --profile demo \
             --no-paginate \
             --output json
 
@@ -141,7 +136,6 @@ jobs:
       - name: Perform Instance refresh
         run: |
           aws autoscaling start-instance-refresh \
-            --profile demo \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
             --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
