@@ -138,7 +138,11 @@ jobs:
       
       - name: Perform Instance refresh
         run: |
-          AWS_PAGER="" aws autoscaling describe-auto-scaling-groups 
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }}" \
+            --preferences MinHealthyPercentage=90 \
+            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}' 
+            --debug
 
 
 
