@@ -72,28 +72,20 @@ jobs:
           echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
           echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl          
-
       
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
         with:
-          version: '1.12.0' 
-
-
-      
+          version: '1.12.0'       
 
       - name: Configure AWS Credentials demo profile
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEMO }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}'
           aws-region: '${{ secrets.AWS_REGION }}'
           profile: demo
-
-
-      - name: Set AWS_PROFILE to demo
-        run: |
-          echo "AWS_PROFILE=demo" >> $GITHUB_ENV        
+  
 
       - name: Create webapp.zip from existing directory
         run: |
@@ -122,6 +114,7 @@ jobs:
       
       - name: Create a new version of Launch template
         run: |
+          export AWS_PROFILE=demo
           AMI_ID=$(aws ec2 describe-images \
             --filters "Name=name,Values=webapp-image-*" \
             --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
@@ -140,6 +133,7 @@ jobs:
       
       - name: Perform Instance refresh
         run: |
+          export AWS_PROFILE=demo
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
