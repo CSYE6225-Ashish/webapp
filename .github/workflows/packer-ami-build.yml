@@ -84,7 +84,6 @@ jobs:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEMO }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}'
           aws-region: '${{ secrets.AWS_REGION }}'
-          profile: demo
   
 
       - name: Create webapp.zip from existing directory
@@ -114,7 +113,6 @@ jobs:
       
       - name: Create a new version of Launch template
         run: |
-          export AWS_PROFILE=demo
           AMI_ID=$(aws ec2 describe-images \
             --filters "Name=name,Values=webapp-image-*" \
             --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
@@ -133,11 +131,10 @@ jobs:
       
       - name: Perform Instance refresh
         run: |
-          export AWS_PROFILE=demo
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
-            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
+            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}' 
 
 
 
