@@ -109,10 +109,10 @@ jobs:
         run: |
           packer validate --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
       
-      - name: Build AWS AMI
-        working-directory: ./packer
-        run: |
-          packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
+      # - name: Build AWS AMI
+      #   working-directory: ./packer
+      #   run: |
+      #     packer build --var-file=dev.pkvars.hcl webapp-image.pkr.hcl
 
       
       - name: Create a new version of Launch template
@@ -136,6 +136,7 @@ jobs:
       - name: Perform Instance refresh
         run: |
           aws autoscaling start-instance-refresh \
+            --profile demo
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
             --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
