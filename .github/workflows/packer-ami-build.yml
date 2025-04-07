@@ -144,8 +144,7 @@ jobs:
 
           while true; do
               STATUS=$(aws autoscaling describe-instance-refreshes \
-              --auto-scaling-group-name "$ASG_NAME" \
-              --profile "$PROFILE" \
+              --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
               --query "InstanceRefreshes[0].Status" \
               --output text)
 
