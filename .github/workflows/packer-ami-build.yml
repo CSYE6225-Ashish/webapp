@@ -128,22 +128,43 @@ jobs:
             --no-paginate \
             --output json
       
-      - name: Configure AWS Credentials demo profile
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEMO }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}'
-          aws-region: '${{ secrets.AWS_REGION }}'
-
+  
       
       - name: Perform Instance refresh
         run: |
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
-            --region us-east-1
+            --region ${{ secrets.AWS_REGION }} \
             --preferences MinHealthyPercentage=90 \
-            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "3"}}' 
-            --debug
+            --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}' 
+
+      - name: Wait for instance refresh to complete
+        run: |
+          echo "Waiting for instance refresh to complete on ASG: ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} "\
+
+          while true; do
+              STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "$ASG_NAME" \
+              --profile "$PROFILE" \
+              --query "InstanceRefreshes[0].Status" \
+              --output text)
+
+            echo "Current status: $STATUS"
+
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance refresh completed successfully."
+              break
+            elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Failed" ]; then
+              echo "Instance refresh failed or was cancelled. Status: $STATUS"
+              exit 1
+            fi
+
+            echo "Still in progress... checking again in 15 seconds."
+            sleep 15
+          done
+
+
+
 
 
 
