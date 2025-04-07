@@ -90,6 +90,11 @@ jobs:
           aws-region: '${{ secrets.AWS_REGION }}'
           profile: demo
 
+
+      - name: Set AWS_PROFILE to demo
+        run: |
+          echo "AWS_PROFILE=demo" >> $GITHUB_ENV        
+
       - name: Create webapp.zip from existing directory
         run: |
           sudo apt-get update -y
@@ -135,7 +140,7 @@ jobs:
       
       - name: Perform Instance refresh
         run: |
-          aws autoscaling start-instance-refresh --profile demo \
+          aws autoscaling start-instance-refresh \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
             --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
