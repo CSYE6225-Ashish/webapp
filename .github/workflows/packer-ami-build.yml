@@ -135,8 +135,7 @@ jobs:
       
       - name: Perform Instance refresh
         run: |
-          aws autoscaling start-instance-refresh \
-            --profile demo
+          aws autoscaling start-instance-refresh --profile demo \
             --auto-scaling-group-name ${{ vars.DEMO_AUTO_SCALING_GROUP_NAME }} \
             --preferences MinHealthyPercentage=90 \
             --desired-configuration '{"LaunchTemplate": {"LaunchTemplateId": "${{ vars.DEMO_LAUNCH_TEMPLATE_ID }}", "Version": "$Latest"}}'
