@@ -127,6 +127,13 @@ jobs:
             --launch-template-data '{"ImageId":"'"${AMI_ID}"'"}' \
             --no-paginate \
             --output json
+      
+      - name: Configure AWS Credentials demo profile
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_DEMO }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}'
+          aws-region: '${{ secrets.AWS_REGION }}'
 
       
       - name: Perform Instance refresh
