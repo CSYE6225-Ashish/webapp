@@ -72,8 +72,8 @@ jobs:
           echo "source_ami       = \"${{ secrets.SOURCE_AMI }}\"" >> dev.pkvars.hcl
           echo "ami_name_prefix  = \"${{ secrets.AMI_NAME_PREFIX }}\"" >> dev.pkvars.hcl
           echo "dev_user         = \"${{ secrets.DEV_USER }}\"" >> dev.pkvars.hcl     
-          echo "aws_access_key_demo" = \"${{ secrets.AWS_ACCESS_KEY_DEMO }}\"" >> dev.pkvars.hcl
-          echo "aws_secret_key_demo" = \"${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}\"" >> dev.pkvars.hcl 
+          echo "aws_access_key_demo = \"${{ secrets.AWS_ACCESS_KEY_DEMO }}\"" >> dev.pkvars.hcl
+          echo "aws_secret_key_demo = \"${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}\"" >> dev.pkvars.hcl 
 
       
       - name: Set up Packer
