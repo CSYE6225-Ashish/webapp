@@ -59,6 +59,14 @@ variable "db_host" {
   default = env("DB_HOST")
 }
 
+variable "aws_access_key_demo" {
+  default = env("AWS_ACCESS_KEY_DEMO")
+}
+
+variable "aws_secret_key_demo" {
+  default = env("AWS_SECRET_ACCESS_KEY_DEMO")
+}
+
 variable "dev_user" {}
 
 
@@ -136,7 +144,11 @@ build {
     inline = [
       "wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb",
       "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
-      "rm amazon-cloudwatch-agent.deb"
+      "rm amazon-cloudwatch-agent.deb",
+      "sudo snap install aws-cli --classic",
+      "aws configure set aws_access_key_id ${var.aws_access_key_demo}",
+      "aws configure set aws_secret_access_key ${var.aws_secret_key_demo}",
+      "aws configure set default.region ${var.aws_region}"
     ]
   }
 
