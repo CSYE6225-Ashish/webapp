@@ -22,7 +22,7 @@ sequelize.sync().then(
 
 
 app.use('/healthz', middleware, healthCheckRoutes);
-app.use('/healthz_refresh', middleware, healthCheckRoutes);
+app.use('/healthz2', middleware, healthCheckRoutes);
 app.use('/v1/file',fileUploadRoutes);
 app.use('/*',middleware,notAllowedRoutes);
 
