@@ -161,8 +161,8 @@ jobs:
               exit 1
             fi
 
-            echo "Still in progress... checking again in 15 seconds."
-            sleep 15
+            echo "Still in progress... checking again in 5 seconds."
+            sleep 5
           done
 
 
