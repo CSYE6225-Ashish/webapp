@@ -25,10 +25,10 @@
                 ]
             }
         },
-        "log_stream_name": "cloudwatch_log_stream_review_Assignment7"
+        "log_stream_name": "cloudwatch_log_stream_final_review"
     },
     "metrics": {
-          "namespace": "cloudwatch_log_stream_review_Assignment7",
+          "namespace": "cloudwatch_log_stream_final_review",
           "metrics_collected": {
               "statsd": {
                   "service_address": ":8125",
